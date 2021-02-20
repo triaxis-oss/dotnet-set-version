@@ -25,32 +25,38 @@ if (!ver) {
 }
 
 const origVer = ver;
-const versionTag = context.ref.startsWith('refs/tags/v')
+const versionTag = context.ref.startsWith('refs/tags/v');
+
 if (versionTag) {
-  ver = context.ref.split('/')[2].substring(1)
+  ver = context.ref.split('/')[2].substring(1);
 } else {
   try {
     execSync("git fetch --unshallow");
     ver = execSync("git describe --tags --match=v*").toString().trim().substring(1);
     const verParts = ver.split('-');
     if (verParts.length < 3 || !verParts.slice(-1)[0].startsWith('g')) {
-      console.warn(`git describe returned version in unexpected format, using as-is`)
+      console.warn(`git describe returned version in unexpected format, using as-is`);
     } else {
-      ver = `${verParts.slice(0,-2).join('-')}.${verParts.slice(-2).join('+')}`
+      ver = `${verParts.slice(0,-2).join('-')}.${verParts.slice(-2).join('+')}`;
     }
   } catch (err) {
     console.error(err);
-    console.warn(`git describe failed to provide a version number, using project version + commit ID`)
-    ver = `${origVer}+g${context.sha.substring(0, 8)}`
+    console.warn(`git describe failed to provide a version number, using project version + commit ID`);
+    ver = `${origVer}+g${context.sha.substring(0, 8)}`;
   }
 }
 
 if (origVer) {
-  console.info(`Setting version: ${ver}`)
+  console.info(`Setting version: ${ver}`);
   projLines[verLine] = projLines[verLine].replace(origVer, ver);
 
-  fs.writeFileSync(projFile, projLines.join('\n'))
+  fs.writeFileSync(projFile, projLines.join('\n'));
 }
 
-core.setOutput('is-release', context.payload.base_ref == 'refs/heads/master')
-core.setOutput('version', ver)
+const isRelease = versionTag && context.payload.base_ref == 'refs/heads/master';
+if (isRelease) {
+  console.info(`This is a public release`);
+}
+
+core.setOutput('is-release', isRelease);
+core.setOutput('version', ver);
