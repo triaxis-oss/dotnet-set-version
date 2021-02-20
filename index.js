@@ -30,10 +30,18 @@ if (versionTag) {
   ver = context.ref.split('/')[2].substring(1)
 } else {
   try {
-    ver = execSync("git fetch --unshallow && git describe --tags --match=v*")
-  } catch {
+    execSync("git fetch --unshallow");
+    ver = execSync("git describe --tags --match=v*").toString().trim().substring(1);
+    const verParts = ver.split('-');
+    if (verParts.length < 3 || !verParts.slice(-1)[0].startsWith('g')) {
+      console.warn(`git describe returned version in unexpected format, using as-is`)
+    } else {
+      ver = `${verParts.slice(0,-2).join('-')}.${verParts.slice(-2).join('+')}`
+    }
+  } catch (err) {
+    console.error(err);
     console.warn(`git describe failed to provide a version number, using project version + commit ID`)
-    ver += `-g${context.sha.substring(0, 8)}`
+    ver = `${origVer}+g${context.sha.substring(0, 8)}`
   }
 }
 
