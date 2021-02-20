@@ -1,0 +1,14 @@
+name: 'Set .NET project version'
+description: 'Patches the project version according to git tags'
+inputs:
+  project:
+    description: 'Project file to patch'
+    required: true
+outputs:
+  is-release:
+    description: 'Determines if the build is a tagged release build'
+  version:
+    description: 'Actual version string used for the build'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

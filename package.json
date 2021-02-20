@@ -1,0 +1,28 @@
+{
+  "name": "dotnet-set-version",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "ncc build index.js --minify --license licenses.txt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triaxis-oss/dotnet-set-version.git"
+  },
+  "keywords": [],
+  "author": "Stefan Simek <simek@triaxis.sk>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/triaxis-oss/dotnet-set-version/issues"
+  },
+  "homepage": "https://github.com/triaxis-oss/dotnet-set-version#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.27.0"
+  }
+}
