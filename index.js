@@ -7,6 +7,7 @@ const projFile = core.getInput('project');
 
 let projLines = fs.readFileSync(projFile, 'utf8').split('\n');
 let verLine = 0;
+let pgLine = 0;
 let ver = '';
 
 for (let i = 0; i < projLines.length; i++) {
@@ -18,10 +19,18 @@ for (let i = 0; i < projLines.length; i++) {
     console.info(`Found project version ${ver} at line ${verLine}`);
     break;
   }
+
+  if (!pgLine && trimmed == "<PropertyGroup>")
+  {
+    pgLine = i;
+  }
 }
 
 if (!ver) {
-  core.setFailed('Could not find version property in project file');
+  ver = "0.0.0";
+  verLine = pgLine + 1;
+  console.warn(`Could not find version property in project file, inserting at line ${verLine}`);
+  projLines.splice(verLine, 0, `<Version>${ver}</Version>`);
 }
 
 const origVer = ver;
