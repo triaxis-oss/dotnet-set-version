@@ -62,7 +62,7 @@ if (origVer) {
   fs.writeFileSync(projFile, projLines.join('\n'));
 }
 
-const isRelease = versionTag && context.payload.base_ref == 'refs/heads/master';
+const isRelease = !!versionTag;
 if (isRelease) {
   console.info(`This is a public release`);
 }
